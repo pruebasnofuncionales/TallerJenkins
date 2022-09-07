@@ -17,7 +17,11 @@ pipeline {
       steps {
         git branch: 'master', url: 'https://github.com/pruebasAppsP/Taller_Jenkins.git'
         dir('frontend') {
-          sh 'npm install'
+          sh''' 
+          echo Ingreso
+          npm install
+          npm run test
+          '''
         }
       }
     }
