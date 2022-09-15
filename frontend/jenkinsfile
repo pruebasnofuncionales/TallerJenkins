@@ -8,7 +8,7 @@ pipeline {
   parameters {
     string(name: 'container_name', defaultValue: 'pagina_web', description: 'Nombre del contenedor de docker.')
     string(name: 'image_name', defaultValue: 'pagina_img', description: 'Nombre de la imagene docker.')
-    string(name: 'tag_image', defaultValue: 'lts', description: 'Tag de la imagen de la página.')
+    string(name: 'tag_image', defaultValue: 'lts', description: 'Tag de la imagen de la pÃ¡gina.')
     string(name: 'container_port', defaultValue: '80', description: 'Puerto que usa el contenedor')
   }
 
@@ -16,20 +16,19 @@ pipeline {
     stage('install') {
       steps {
         git branch: 'master', url: 'https://github.com/pruebasAppsP/Taller_Jenkins.git'
+        
+        echo 'Ingreso'
         dir('frontend') {
-          sh''' 
-          echo Ingreso
-          npm install
-          npm run test
-          '''
+          bat 'npm install'
         }
+        echo 'Salio'
       }
     }
 
     stage('test') {
       steps {
         dir('frontend') {
-          sh 'npm run test'
+          bat 'npm run test'
         }
       }
     }
@@ -39,22 +38,22 @@ pipeline {
         dir('frontend') {
           script {
             try {
-              sh 'docker stop ${container_name}'
-              sh 'docker rm ${container_name}'
-              sh 'docker rmi ${image_name}:${tag_image}'
+              
+              bat 'docker rm ${container_name}'
+              bat 'docker rmi ${image_name}:${tag_image}'
             } catch (Exception e) {
               echo 'Exception occurred: ' + e.toString()
             }
           }
-          sh 'npm run build'
-          sh 'docker build -t ${image_name}:${tag_image} .'
+          bat 'npm run build'
+          bat 'docker build -t ${image_name}:${tag_image} .'
         }
       }
     }
 
     stage('deploy') {
       steps {
-        sh 'docker run -d -p ${container_port}:80 --name ${container_name} ${image_name}:${tag_image}'
+        bat 'docker run -d -p ${container_port}:80 --name ${container_name} ${image_name}:${tag_image}'
       }
     }
   }
