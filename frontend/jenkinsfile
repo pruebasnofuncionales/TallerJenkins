@@ -57,5 +57,13 @@ pipeline {
       }
     }
   }
+  stage('SCM') { 
+    git 'URL_del_repositorio_git' 
+  } 
 
+  stage('SonarQube analysis') { 
+    withSonarQubeEnv('Sonarqube') {  
+      bat "C:/sonar-scanner-4.7.0.2747-windows/bin/sonar-scanner -Dsonar.projectKey=key_del_proyecto -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.login=token_de_acceso -Dsonar.organization=nombre_organizacion" 
+    } 
+  }
 }
