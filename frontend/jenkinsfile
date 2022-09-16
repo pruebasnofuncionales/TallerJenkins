@@ -56,8 +56,6 @@ pipeline {
         bat 'docker run -d -p ${container_port}:80 --name ${container_name} ${image_name}:${tag_image}'
       }
     }*/
-    stage('Sonar'){
-      windows:{
         node{
           stage('SCM') {
             git 'https://github.com/pruebasAppsP/Taller_Jenkins.git'
@@ -69,8 +67,7 @@ pipeline {
             }
           }
         }
-      }
-    }
+     
   }
 
 }
