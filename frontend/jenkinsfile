@@ -65,7 +65,7 @@ pipeline {
           stage('SonarQube analysis') {
             def scannerHome = tool 'SonarScanner 4.0';
             withSonarQubeEnv('My SonarQube Server') { // If you have configured more than one global server connection, you can specify its name
-              sh "C:\sonarqube-9.6.1.59531\bin\windows-x86-64\StartSonar"
+              sh "C:/sonarqube-9.6.1.59531/bin/windows-x86-64/StartSonar"
             }
           }
         }
