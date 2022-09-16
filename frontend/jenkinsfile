@@ -19,7 +19,7 @@ pipeline {
         
         echo 'Ingreso'
         dir('frontend') {
-          bat 'npm install'
+          sh 'npm install'
         }
         echo 'Salio'
       }
@@ -28,7 +28,7 @@ pipeline {
     stage('test') {
       steps {
         dir('frontend') {
-          bat 'npm run test'
+          sh 'npm run test'
         }
       }
     }
@@ -39,21 +39,21 @@ pipeline {
           script {
             try {
               
-              bat 'docker rm ${container_name}'
-              bat 'docker rmi ${image_name}:${tag_image}'
+              sh 'docker rm ${container_name}'
+              sh 'docker rmi ${image_name}:${tag_image}'
             } catch (Exception e) {
               echo 'Exception occurred: ' + e.toString()
             }
           }
-          bat 'npm run build'
-          //bat 'docker build -t ${image_name}:${tag_image} .'
+          sh 'npm run build'
+          sh 'docker build -t ${image_name}:${tag_image} .'
         }
       }
     }
 
     stage('deploy') {
       steps {
-        bat 'docker run -d -p ${container_port}:80 --name ${container_name} ${image_name}:${tag_image}'
+        sh 'docker run -d -p ${container_port}:80 --name ${container_name} ${image_name}:${tag_image}'
       }
     }
         /*node{
