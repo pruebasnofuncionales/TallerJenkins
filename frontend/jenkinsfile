@@ -58,7 +58,7 @@ pipeline {
     }*/
     stage('Sonar'){
       windows:{
-        node{
+        node('windows'){
           stage('SCM') {
             git 'https://github.com/foo/bar.git'
           }
