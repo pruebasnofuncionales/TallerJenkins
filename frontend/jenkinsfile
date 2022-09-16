@@ -58,7 +58,7 @@ pipeline {
     }*/
     stage('Sonar'){
       windows:{
-        node('windows'){
+        node{
           stage('SCM') {
             git 'https://github.com/pruebasAppsP/Taller_Jenkins.git'
           }
