@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   tools {
-    nodejs "Node"
+    nodejs "node"
   }
 
   parameters {
@@ -36,7 +36,7 @@ pipeline {
     stage('build') {
       steps {
         dir('frontend') {
-          /*script {
+          script {
             try {
               
               bat 'docker rm ${container_name}'
@@ -44,19 +44,19 @@ pipeline {
             } catch (Exception e) {
               echo 'Exception occurred: ' + e.toString()
             }
-          }*/
+          }
           bat 'npm run build'
           //bat 'docker build -t ${image_name}:${tag_image} .'
         }
       }
     }
 
-    /*stage('deploy') {
+    stage('deploy') {
       steps {
         bat 'docker run -d -p ${container_port}:80 --name ${container_name} ${image_name}:${tag_image}'
       }
-    }*/
-        node{
+    }
+        /*node{
           stage('SCM') {
             git 'https://github.com/pruebasAppsP/Taller_Jenkins.git'
           }
@@ -66,7 +66,7 @@ pipeline {
               sh "C:/sonarqube-9.6.1.59531/bin/windows-x86-64/StartSonar"
             }
           }
-        }
+        }*/
      
   }
 
