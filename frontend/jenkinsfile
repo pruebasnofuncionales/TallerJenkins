@@ -1,92 +1,73 @@
-def scan_type
- def target
- pipeline {
-     agent any
-     parameters {
-         string defaultValue: "https://example.com",
-                 description: 'Target URL to scan',
-                 name: 'TARGET'
- 
-         booleanParam defaultValue: true,
-                 description: 'Parameter to know if wanna generate report.',
-                 name: 'GENERATE_REPORT'
-     }
-     stages {
-         stage('Pipeline Info') {
-                 steps {
-                     script {
-                         echo "<--Parameter Initialization-->"
-                         echo """
-                         The current parameters are:
-                             Target: ${params.TARGET}
-                         """
-                     }
-                 }
-         }
- 
-         stage('Setting up OWASP ZAP docker container') {
-             steps {
-                 script {
-                         echo "Pulling up last OWASP ZAP container --> Start"
-                         bat "docker pull owasp/zap2docker-stable"
-                         echo "Pulling up last VMS container --> End"
-                         echo "Starting container --> Start"
-                         bat """
-                         docker run -dt --name owasp \
-                         owasp/zap2docker-stable \
-                         /bin/bash
-                         """
-                 }
-             }
-         }
- 
- 
-         stage('Prepare wrk directory') {
-             when {
-                    environment name : 'GENERATE_REPORT', value: 'true'
-             }
-             steps {
-                 script {
-                         bat """
-                             docker exec owasp \
-                             mkdir /zap/wrk
-                         """
-                     }
-                 }
-         }
- 
- 
-         stage('Scanning target on owasp container') {
-             steps {
-                 script {
-                     target = "${params.TARGET}"
-                     bat """
-                             docker exec owasp zap-full-scan.py -t $target -r report.html -I
-                         """
-                         //docker exec owasp ejecuta el contenedor con nombre owasp
-                         // "zap-full-scan.py" scrip de nalaisis completo
-                         //"-t $target" URL objetivo
-                         //-x report-$(date +%d-%b-%Y).xml
-                    }
-             }
-         }
-        stage('Copiar reporte a workspace'){
-             steps {
-                 script {
-                     bat """
-                         docker cp owasp:/zap/wrk/report.html ${WORKSPACE}/report.html
-                     """
-                 }
-             }
-         }
-     }
-    post {
-             always {
-                 echo "Removiendo contenedor"
-                 bat '''
-                     docker stop owasp
-                     docker rm owasp
-                 '''
-             }
-         }
- }
+pipeline {
+  agent any
+
+  tools {
+    nodejs "Node"
+  }
+
+  parameters {
+    string(name: 'container_name', defaultValue: 'pagina_web', description: 'Nombre del contenedor de docker.')
+    string(name: 'image_name', defaultValue: 'pagina_img', description: 'Nombre de la imagene docker.')
+    string(name: 'tag_image', defaultValue: 'lts', description: 'Tag de la imagen de la pÃƒÂ¡gina.')
+    string(name: 'container_port', defaultValue: '80', description: 'Puerto que usa el contenedor')
+  }
+
+  stages {
+    stage('install') {
+      steps {
+        git branch: 'master', url: 'https://github.com/pruebasAppsP/Taller_Jenkins.git'
+        
+        echo 'Ingreso'
+        dir('frontend') {
+          bat 'npm install'
+        }
+        echo 'Salio'
+      }
+    }
+
+    stage('test') {
+      steps {
+        dir('frontend') {
+          bat 'npm run test'
+        }
+      }
+    }
+
+    stage('build') {
+      steps {
+        dir('frontend') {
+          /*script {
+            try {
+              
+              bat 'docker rm ${container_name}'
+              bat 'docker rmi ${image_name}:${tag_image}'
+            } catch (Exception e) {
+              echo 'Exception occurred: ' + e.toString()
+            }
+          }*/
+          bat 'npm run build'
+          //bat 'docker build -t ${image_name}:${tag_image} .'
+        }
+      }
+    }
+
+    /*stage('deploy') {
+      steps {
+        bat 'docker run -d -p ${container_port}:80 --name ${container_name} ${image_name}:${tag_image}'
+      }
+    }*/
+        node{
+          stage('SCM') {
+            git 'https://github.com/pruebasAppsP/Taller_Jenkins.git'
+          }
+          stage('SonarQube analysis') {
+            def scannerHome = tool 'SonarScanner 4.0';
+            withSonarQubeEnv('My SonarQube Server') { // If you have configured more than one global server connection, you can specify its name
+              sh "C:/sonarqube-9.6.1.59531/bin/windows-x86-64/StartSonar"
+            }
+          }
+        }
+     
+  }
+
+}
