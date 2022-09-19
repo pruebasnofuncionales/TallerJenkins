@@ -31,7 +31,7 @@ def scan_type
                          bat "docker pull owasp/zap2docker-stable"
                          echo "Pulling up last VMS container --> End"
                          echo "Starting container --> Start"
-                         sh """
+                         bat """
                          docker run -dt --name owasp \
                          owasp/zap2docker-stable \
                          /bin/bash
@@ -47,7 +47,7 @@ def scan_type
              }
              steps {
                  script {
-                         sh """
+                         bat """
                              docker exec owasp \
                              mkdir /zap/wrk
                          """
@@ -60,7 +60,7 @@ def scan_type
              steps {
                  script {
                      target = "${params.TARGET}"
-                     sh """
+                     bat """
                              docker exec owasp zap-full-scan.py -t $target -r report.html -I
                          """
                          //docker exec owasp ejecuta el contenedor con nombre owasp
@@ -73,7 +73,7 @@ def scan_type
         stage('Copiar reporte a workspace'){
              steps {
                  script {
-                     sh """
+                     bat """
                          docker cp owasp:/zap/wrk/report.html ${WORKSPACE}/report.html
                      """
                  }
@@ -83,7 +83,7 @@ def scan_type
     post {
              always {
                  echo "Removiendo contenedor"
-                 sh '''
+                 bat '''
                      docker stop owasp
                      docker rm owasp
                  '''
