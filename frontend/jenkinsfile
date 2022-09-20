@@ -14,7 +14,7 @@ def scan_type
      stages {
      stage('SCM') {
             steps {
-                git url: 'https://github.com/pruebasAppsP/IntegracionSonar.git'            }
+                git url: 'https://github.com/pruebasAppsP/Taller_Jenkins.git'            }
         }
         stage('build && SonarQube analysis') {
             steps {
