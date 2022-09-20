@@ -12,7 +12,19 @@ def scan_type
                  name: 'GENERATE_REPORT'
      }
      stages {
+     stage('SCM') {
+            steps {
+                git url: 'https://github.com/pruebasAppsP/IntegracionSonar.git'            }
+        }
+        stage('build && SonarQube analysis') {
+            steps {
+              withSonarQubeEnv('Sonarqube') {  
+                   bat "C:/sonar-scanner-4.7.0.2747-windows/bin/sonar-scanner -Dsonar.projectKey=pruebasAppsP_IntegracionSonar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.login=98334f246f134d4e0a8f3c0617f884ce6b89b5bc -Dsonar.organization=pruebasappsp"
+                }
+            }
+        }
          stage('Pipeline Info') {
+         
                  steps {
                      script {
                          echo "<--Parameter Initialization-->"
