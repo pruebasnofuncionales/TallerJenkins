@@ -28,11 +28,11 @@ def scan_type
              steps {
                  script {
                          echo "Pulling up last OWASP ZAP container --> Start"
-                         bat "docker pull owasp/zap2docker-stable"
+                         bat "sudo docker pull owasp/zap2docker-stable"
                          echo "Pulling up last VMS container --> End"
                          echo "Starting container --> Start"
                          bat """
-                         docker run -dt --name owasp \
+                         sudo docker run -dt --name owasp \
                          owasp/zap2docker-stable \
                          /bin/bash
                          """
@@ -48,7 +48,7 @@ def scan_type
              steps {
                  script {
                          bat """
-                             docker exec owasp \
+                             sudo docker exec owasp \
                              mkdir /zap/wrk
                          """
                      }
@@ -61,7 +61,7 @@ def scan_type
                  script {
                      target = "${params.TARGET}"
                      bat """
-                             docker exec owasp zap-full-scan.py -t $target -r report.html -I
+                             sudo docker exec owasp zap-full-scan.py -t $target -r report.html -I
                          """
                          //docker exec owasp ejecuta el contenedor con nombre owasp
                          // "zap-full-scan.py" scrip de nalaisis completo
@@ -74,7 +74,7 @@ def scan_type
              steps {
                  script {
                      bat """
-                         docker cp owasp:/zap/wrk/report.html ${WORKSPACE}/report.html
+                        sudo docker cp owasp:/zap/wrk/report.html ${WORKSPACE}/report.html
                      """
                  }
              }
@@ -84,8 +84,8 @@ def scan_type
              always {
                  echo "Removiendo contenedor"
                  bat '''
-                     docker stop owasp
-                     docker rm owasp
+                     sudo docker stop owasp
+                     sudo docker rm owasp
                  '''
              }
          }
