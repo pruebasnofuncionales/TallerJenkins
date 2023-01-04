@@ -49,8 +49,7 @@ def scan_type
              steps {
                  script {
                          sh """
-                             docker exec owasp \
-                             mkdir /zap/wrk
+                             docker exec owasp mkdir /zap/wrk
                          """
                      }
                  }
