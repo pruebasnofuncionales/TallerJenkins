@@ -61,11 +61,11 @@ def scan_type
                  script {
                      target = "${params.TARGET}"
                      sh """
-                             docker exec owasp zap-api-scan.py -t $target -f openapi -r report.html -I -a -d
+                             docker exec owasp zap-full-scan.py -t $target -f openapi -r report.html -I -a -d
                          """
                          // docker exec owasp zap-full-scan.py -t $target -r report.html -I -a -d Escaneo completo
                          //docker exec owasp ejecuta el contenedor con nombre owasp
-                         // "zap-full-scan.py" scrip de nalaisis completo
+                         // "" scrip de nalaisis completo
                          //"-t $target" URL objetivo
                          //-x report-$(date +%d-%b-%Y).xml
                          // Usage: zap-api-scan.py -t <target> -f <format> [options]
